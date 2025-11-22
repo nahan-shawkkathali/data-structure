@@ -1,87 +1,107 @@
 #include<stdio.h>
-#define max_size 3
+#define MAX_SIZE 5
 
-int cirqueue[max_size];
+int cq[MAX_SIZE];
 int front = -1, rear = -1;
 
-void display()
-{
-    int i;
-    if(rear=front=0)
+void enque(int item){
+    int next;
+
+    if(front == -1 && rear == -1)   // FIXED condition
     {
-        printf("circular Queue is empty\n");
+        front = rear = 0;
+        cq[rear] = item;
+    }
+    else{
+        next = (rear + 1) % MAX_SIZE;
+
+        if(next != front)   // space available
+        {
+            rear = next;    // FIXED missing rear update
+            cq[rear] = item;
+        }
+        else
+        {
+            printf("Queue is full\n");
+            return;
+        }
+    }
+    printf("item %d inserted\n", item);
+}
+
+void deque()  // item argument removed (wrong)
+{
+    if(front == -1)     // FIXED
+    {
+        printf("Queue empty\n");
         return;
     }
-    printf("circular Queue elements are: ");
-    for(i = front; i <= rear; i++)
+
+    int item = cq[front];
+
+    if(front == rear)    // only one element
     {
-        printf("%d ", cirqueue[i]);
+        front = rear = -1;
+    }
+    else
+    {
+        front = (front + 1) % MAX_SIZE;
+    }
+
+    printf("deleted item %d\n", item);
+}
+
+void display(){
+    if(front == -1)
+    {
+        printf("Queue empty\n");
+        return;
+    }
+    
+    printf("Queue elements: ");
+
+    int i = front;
+    while(1)
+    {
+        printf("%d ", cq[i]);
+        if(i == rear) break;
+        i = (i + 1) % MAX_SIZE;
     }
     printf("\n");
 }
 
-void enqueue(int item)
-{
-    if(rear == front)
-    {
-        printf("Queue is full..\n");
-        return;
-    }
-    if(front == -1) 
-        front = 0;
-    
-    rear++;
-    cirqueue[rear] = item;
-    printf("%d is enqueued successfully\n", item);
-}
-
-void dequeue()
-{
-    if(rear=front=0)
-    {
-        printf("circular Queue is empty...\n");
-        return;
-    }
-    int item = cirqueue[front];
-    front++;
-    printf("The dequeued element is: %d\n", item);
-
-         
-    if(front > rear)
-    {
-        front = -1;
-        rear = -1;
-    }
-}
-
-int main()
-{
+int main(){
     int choice, item;
-    do
-    {
-        printf("1. Enqueue\n2. Dequeue\n3. Display\n4. Exit\n");
+
+    do{
+        printf("\n1. Enqueue\n2. Dequeue\n3. Display\n4. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
-        switch(choice)
-        {
+
+        switch(choice){
             case 1:
-                printf("Enter the element to enqueue: ");
+                printf("Enter element to insert: ");
                 scanf("%d", &item);
-                enqueue(item);
+                enque(item);
                 break;
+
             case 2:
-                dequeue();
+                deque();
                 break;
+
             case 3:
                 display();
                 break;
+
             case 4:
+                printf("Exiting...\n");
                 break;
+
             default:
-                printf("Enter the correct choice.\n");
-                break;
+                printf("Invalid choice\n");
         }
-    } while(choice != 4);
+
+    }while(choice != 4);
+
     return 0;
 }
-
